@@ -1,0 +1,22 @@
+{{#with this}}
+<li class="country-item">
+    <img src="{{flags.svg}}" alt="" width="40">
+    <span class="country-item__name">{{name.official}}</span>
+</li>
+<li class="country-item">Capital:
+    <span class="countries-item__value">{{capital}}
+    </span>
+</li>
+<li class="country-item">Population:
+    <span class="countries-item__value">{{population}}
+    </span>
+</li>
+<li class="country-item">Languages:
+    <span class="countries-item__value">{{#each languages}}
+        {{#if @last}} {{this}}
+        {{else}} {{this}},
+        {{/if}}
+        {{/each}}
+    </span>
+</li>
+{{/with}}
