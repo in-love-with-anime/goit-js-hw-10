@@ -9,3 +9,4 @@ export function fetchCountries(name) {
         })
     .catch(error => console.err(error));
 };
+

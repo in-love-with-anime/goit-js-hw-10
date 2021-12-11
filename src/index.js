@@ -1,45 +1,45 @@
-import countriesTplList from './templates/countryTpl.hbs';
-import currentCountryTpl from './templates/current_country.hbs';
 import './css/styles.css';
-import debounce from 'lodash.debounce';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { fetchCountries } from './js/fetchCountries';
-
+import countryCard from './templates/country-card.hbs';
+import countryList from './templates/country-list.hbs';
 
 const DEBOUNCE_DELAY = 300;
-
-const getRefs = {
-    inputSearch: document.querySelector('#search-box'),
-    countryList: document.querySelector('.country-list'),
-    countryInfo: document.querySelector('.country-info'),
-};
+const debounce = require('lodash.debounce');
 
 
-getRefs.inputSearch.addEventListener('input', debounce(onCountriesFetch, DEBOUNCE_DELAY));
+const inputEl = document.querySelector('#search-box');
+const countriesListEl = document.querySelector('.country-list');
+const cardContainerEl = document.querySelector('.country-info');
 
-function onCountriesFetch(evt) {
-  const inputValue = evt.target.value.trim();
-  if (inputValue.length === 0) {
-getRefs.countryList.innerHTML = '';
-    return;
-  } else {
-    fetchCountries(inputValue)
-      .then(appendCountriesMarkup)
-        .catch( () => {
-            getRefs.countryList.innerHTML = "";
-            Notify.failure('Oops, there is no country with that name');
-        });
-  }
-}
 
-function appendCountriesMarkup(countries) {
-    if (countries.length > 9) {
-    getRefs.countryList.innerHTML = "";
-    return Notify.info('Too many matches found. Please enter a more specific name.');
-  }
-  if (countries.length === 1) {
-    getRefs.countryList.innerHTML = currentCountryTpl(countries[0]);
-  } else {
-    getRefs.countryList.innerHTML = countriesTplList(countries);
-  }
+
+const onCountriesFetch = (event) => {
+    const inputValue = event.target.value.trim();
+    if (inputValue.length === 0) {
+        countriesListEl.innerHTML = "";
+        return;
+    } else {
+        fetchCountries(inputValue)
+        .then(onMarkupCountryCard)
+            .catch( () => {
+                countriesListEl.innerHTML = "";
+                Notify.failure('Oops, there is no country with that name');
+            });
+    };
+} 
+
+inputEl.addEventListener('input', debounce(onCountriesFetch, DEBOUNCE_DELAY));
+
+
+// Добавляем разметку
+const onMarkupCountryCard = (countries) => {
+    if (countries.length > 10) {
+        cardContainerEl.innerHTML = "";
+        return Notify.info('Too many matches found. Please enter a more specific name.');
+    } if (countries.length === 1) {
+        cardContainerEl.innerHTML = countryCard(countries[0]);
+    } else {
+        countriesListEl.innerHTML = countryList(countries);
+    }
 }
